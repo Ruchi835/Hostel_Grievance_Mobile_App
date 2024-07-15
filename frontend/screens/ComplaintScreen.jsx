@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-// import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker'; // Import ImagePicker from Expo
 
 const ComplaintScreen = () => {
   const navigation = useNavigation();
@@ -10,9 +10,10 @@ const ComplaintScreen = () => {
     name: '',
     email: '',
     complaint: '',
-    image: null, // Initialize image state
   });
+  const [image, setImage] = useState(null); // State to hold the image URI
 
+  // Function to handle changes in input fields
   const handleInputChange = (field, value) => {
     setFormData({
       ...formData,
@@ -20,6 +21,7 @@ const ComplaintScreen = () => {
     });
   };
 
+  // Function to handle image pick from device library
   const handleImagePick = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
@@ -36,30 +38,30 @@ const ComplaintScreen = () => {
     });
 
     if (!pickerResult.cancelled) {
-      setFormData({
-        ...formData,
-        image: pickerResult.uri,
-      });
+      // Update the image state with the selected image URI
+      console.log("image",pickerResult.uri)
+      setImage(pickerResult.uri);
     }
   };
 
+  // Function to handle form submission
   const handleSubmit = () => {
     // Validate the form fields including the image
-    if (!formData.name || !formData.email || !formData.complaint || !formData.image) {
+    if (!formData.name || !formData.email || !formData.complaint || !image) {
       Alert.alert('Error', 'Please fill in all fields and upload an image');
       return;
     }
 
     // Perform submission logic here (e.g., send data to backend, show confirmation)
-    console.log('Submitting complaint:', formData);
+    console.log('Submitting complaint:', { ...formData, image });
 
     // Optionally, reset form fields after submission
     setFormData({
       name: '',
       email: '',
       complaint: '',
-      image: null,
     });
+    setImage(null); // Clear the image state after submission
 
     // Navigate or show a success message
     Alert.alert('Success', 'Complaint submitted successfully');
@@ -92,15 +94,15 @@ const ComplaintScreen = () => {
         onChangeText={(text) => handleInputChange('complaint', text)}
       />
 
-
-    {/* Image picker
-    <TouchableOpacity style={styles.imagePicker} onPress={handleImagePick}>
-        {formData.image ? (
-          <Image source={{ uri: formData.image }} style={styles.imagePreview} />
-        ) : (
-          <MaterialIcons name="photo-camera" size={24} color="#20315f" />
+      {/* Input field for image upload */}
+      <View style={styles.imagePicker}>
+        <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick}>
+          <Text style={styles.uploadText}>Select Image</Text>
+        </TouchableOpacity>
+        {image && (
+          <Image source={{ uri: image }} style={styles.imagePreview} />
         )}
-      </TouchableOpacity> */}
+      </View>
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Submit Complaint</Text>
@@ -133,14 +135,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   imagePicker: {
-    alignItems: 'center',
     marginBottom: 20,
+    alignItems: 'center',
+  },
+  uploadButton: {
+    backgroundColor: '#20315f',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  uploadText: {
+    color: '#F5B041',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   imagePreview: {
     width: 200,
     height: 200,
     resizeMode: 'cover',
     borderRadius: 10,
+    marginTop: 10,
   },
   button: {
     backgroundColor: '#20315f',

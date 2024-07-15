@@ -1,26 +1,23 @@
+from django.contrib.auth.models import User
 from django.db import models
 
-# Create your models here.
-
 class User_details(models.Model):
-    username = models.CharField(max_length=20)
-    branch = models.CharField(max_length=20,default="null")
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
+    branch = models.CharField(max_length=20, default="null")
     semester = models.IntegerField(default=0)
     roomno = models.IntegerField(default=0)
-    password = models.CharField(max_length=20)
-    email = models.EmailField(unique=True)
-    usertype =models.CharField(
+    usertype = models.CharField(
         max_length=20,
         choices=[
-            ('Student','Student'),
-            ('Supervisor','Supervisor'),
-            ('Security','Security')
-            ]
-        )
+            ('Student', 'Student'),
+            ('Supervisor', 'Supervisor'),
+            ('Security', 'Security')
+        ]
+    )
 
     def __str__(self):
-        return f'{self.username} - {self.usertype}'
-    
+        return f"{self.user.username} ({self.usertype})" if self.user else f"{self.usertype}"
+
 class Complaint(models.Model):
     student = models.ForeignKey(
         User_details, 
@@ -59,4 +56,4 @@ class Complaint(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.student.username} - {self.complaint_type}'
+        return f'{self.student.user.username} - {self.complaint_type}' if self.student and self.student.user else f'{self.complaint_type}'
