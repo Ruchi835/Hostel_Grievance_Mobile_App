@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Picker } from '@react-native-picker/picker'; // Import Picker component
+import { Picker } from '@react-native-picker/picker';
 
-import LoginSVG from '../assets/images/logo.jpeg';
 import CustomButton from '../components/CustomButton.jsx';
 import InputField from '../components/InputField.jsx';
 
@@ -14,10 +13,9 @@ const LoginScreen = () => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
-    userType: '', // Initialize userType state
+    userType: '',
   });
 
-  // Dynamically set header options when component is rendered
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -25,11 +23,12 @@ const LoginScreen = () => {
           <MaterialIcons name="arrow-back" size={24} color="#20315f" />
         </TouchableOpacity>
       ),
-      title: '', // Set the header title
+      title: '',
     });
   }, [navigation]);
 
   const handleInputChange = (field, value) => {
+    console.log(`${field}: ${value}`); // Debugging line
     setFormData({
       ...formData,
       [field]: value,
@@ -37,9 +36,11 @@ const LoginScreen = () => {
   };
 
   const handleLogin = () => {
-    // Validate and handle login logic based on formData
-    console.log('Logging in with:', formData);
-    // Navigation logic after login
+    console.log('Logging in with:', formData); // Debugging line
+    if (!formData.username || !formData.password || !formData.userType) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
     navigation.navigate('AppStack');
   };
 
@@ -47,14 +48,13 @@ const LoginScreen = () => {
     <SafeAreaView style={{ flex: 1, justifyContent: 'center', backgroundColor: '#ffffff' }}>
       <View style={{ paddingHorizontal: 25 }}>
         <View style={{ alignItems: 'center' }}>
-          
+          {/* Add your logo or any other component here */}
         </View>
 
         <Text style={{ fontSize: 28, fontWeight: '500', color: '#20315f', marginBottom: 30 }}>
           Login
         </Text>
 
-        {/* InputField for username */}
         <InputField
           label={'UserName'}
           icon={<MaterialIcons name="person" size={20} color="#20315f" style={{ marginRight: 5 }} />}
@@ -63,7 +63,6 @@ const LoginScreen = () => {
           onChangeText={(text) => handleInputChange('username', text)}
         />
 
-        {/* InputField for password */}
         <InputField
           label={'Password'}
           icon={<Ionicons name="lock-closed-outline" size={20} color="#20315f" style={{ marginRight: 5 }} />}
@@ -72,7 +71,6 @@ const LoginScreen = () => {
           onChangeText={(text) => handleInputChange('password', text)}
         />
 
-        {/* Picker for selecting userType */}
         <View style={styles.pickerContainer}>
           <Text style={styles.pickerLabel}>Login As:</Text>
           <Picker
@@ -87,11 +85,9 @@ const LoginScreen = () => {
           </Picker>
         </View>
 
-        {/* CustomButton component for login */}
         <CustomButton label={"Login"} onPress={handleLogin} />
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 30 }}></View>
-
         <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 30 }}></View>
       </View>
     </SafeAreaView>

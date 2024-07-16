@@ -96,7 +96,8 @@ SIMPLE_JWT = {
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000", 
+    "http://localhost:8081",  # Local web server for React Native web
+    "http://172.16.0.171:8081",  # Expo development server for React Native
     "http://127.0.0.1:8000",
 ]
 

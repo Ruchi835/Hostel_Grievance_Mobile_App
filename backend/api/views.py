@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 
 # Create your views here.
@@ -32,8 +33,13 @@ class ComplaintViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=['get'],url_path='user-complaints/(?P<user_id>[^/.]+)')
     def get_user_complaints(self,request,user_id=None):
         complaints=Complaint.objects.filter(student=user_id)
+        user_data=User_details.objects.filter(id=user_id).values()
+        json_data = json.dumps(list(user_data))
+        data = json.loads(json_data)
+        print(data)
         serializer=self.get_serializer(complaints,many=True)
-        return Response(serializer.data)
+        print(serializer.data)
+        return Response({"user": data[0],"complaints":serializer.data[0]})
     
     @action(detail=False,methods=['get'],url_path='pending-complaints')
     def get_pending_complaints(self,request):
@@ -67,9 +73,11 @@ def login_view(request):
     print(user)
     if user is not None:
         token, _ = Token.objects.get_or_create(user=user)
-        
-        print(f"Login successful for user: {user.username}, token: {token.key} , type:{type(user)}")
-        return Response({'user_id':user.id,'token': token.key})
+        user_data = User_details.objects.filter(user_id = user.id).values()
+        json_data = json.dumps(list(user_data))
+        data = json.loads(json_data)
+
+        return Response({"user": data[0],'token': token.key})
     else:
         print("Login failed: Invalid Credentials")
         return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)

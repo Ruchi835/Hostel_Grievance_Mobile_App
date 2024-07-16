@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, Button } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker'; // Import ImagePicker from Expo
@@ -39,8 +39,8 @@ const ComplaintScreen = () => {
 
     if (!pickerResult.cancelled) {
       // Update the image state with the selected image URI
-      console.log("image",pickerResult.uri)
-      setImage(pickerResult.uri);
+      console.log("image",pickerResult.assets[0].uri)
+      setImage(pickerResult.assets[0].uri);
     }
   };
 
@@ -68,7 +68,7 @@ const ComplaintScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Raise a Complaint</Text>
 
       <TextInput
@@ -108,16 +108,17 @@ const ComplaintScreen = () => {
         <Text style={styles.buttonText}>Submit Complaint</Text>
         <MaterialIcons name="send" size={20} color="#F5B041" />
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#ffffff',
     paddingHorizontal: 20,
     paddingTop: 50,
+    paddingBottom:50,
   },
   title: {
     fontSize: 24,
