@@ -10,7 +10,7 @@ class User_details(models.Model):
         max_length=20,
         choices=[
             ('Student', 'Student'),
-            ('Supervisor', 'Supervisor'),
+            ('Admin', 'Admin'),
             ('Security', 'Security')
         ]
     )

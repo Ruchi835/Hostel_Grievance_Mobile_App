@@ -3,12 +3,12 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, Scro
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker'; // Import ImagePicker from Expo
+import { Picker } from '@react-native-picker/picker';
 
 const ComplaintScreen = () => {
   const navigation = useNavigation();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    complaintType:'',
     complaint: '',
   });
   const [image, setImage] = useState(null); // State to hold the image URI
@@ -39,52 +39,76 @@ const ComplaintScreen = () => {
 
     if (!pickerResult.cancelled) {
       // Update the image state with the selected image URI
-      console.log("image",pickerResult.assets[0].uri)
       setImage(pickerResult.assets[0].uri);
     }
   };
 
   // Function to handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validate the form fields including the image
-    if (!formData.name || !formData.email || !formData.complaint || !image) {
+    if (!formData.complaintType || !formData.complaint || !image) {
       Alert.alert('Error', 'Please fill in all fields and upload an image');
       return;
     }
 
-    // Perform submission logic here (e.g., send data to backend, show confirmation)
-    console.log('Submitting complaint:', { ...formData, image });
-
-    // Optionally, reset form fields after submission
-    setFormData({
-      name: '',
-      email: '',
-      complaint: '',
+    // Create FormData object to send multipart/form-data
+    const formDataToSend = new FormData();
+    formDataToSend.append('complaint_type', formData.complaintType);
+    formDataToSend.append('description', formData.complaint);
+    formDataToSend.append('image', {
+      uri: image,
+      name: 'complaint.jpg',
+      type: 'image/jpeg',
     });
-    setImage(null); // Clear the image state after submission
+    console.log(formDataToSend)
+    try {
+      const response = await fetch('http://172.16.0.42:8000/complaints/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          // Add any other headers if required (e.g., authentication token)
+        },
+        body: formDataToSend,
+      });
 
-    // Navigate or show a success message
-    Alert.alert('Success', 'Complaint submitted successfully');
+      if (!response.ok) {
+        throw new Error('Failed to submit complaint');
+      }
+
+      // Optionally handle success response (e.g., navigate to another screen)
+      Alert.alert('Success', 'Complaint submitted successfully');
+      navigation.navigate('Home'); // Navigate to home screen after successful submission
+    } catch (error) {
+      console.error('Error submitting complaint:', error);
+      Alert.alert('Error', 'Failed to submit complaint. Please try again later.');
+    } finally {
+      // Reset form fields and image state after submission
+      setFormData({
+        complaintType:'',
+        complaint: '',
+      });
+      setImage(null);
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Raise a Complaint</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Your Name"
-        value={formData.name}
-        onChangeText={(text) => handleInputChange('name', text)}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Your Email"
-        value={formData.email}
-        onChangeText={(text) => handleInputChange('email', text)}
-        keyboardType="email-address"
-      />
+      <View style={styles.pickerContainer}>
+        <Text style={styles.pickerLabel}>Complaint Type:</Text>
+        <Picker
+          selectedValue={formData.complaintType}
+          style={styles.picker}
+          onValueChange={(itemValue) => handleInputChange('complaintType', itemValue)}
+        >
+          <Picker.Item label="--Select Complaint Type--" value="" />
+          <Picker.Item label="Maintenance" value="Maintenance" />
+          <Picker.Item label="Food" value="Food" />
+          <Picker.Item label="Cleanliness" value="Cleanliness" />
+          <Picker.Item label="Other" value="Other" />
+        </Picker>
+      </View>
 
       <TextInput
         style={[styles.input, { height: 150 }]}
@@ -170,6 +194,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginRight: 10,
+  },
+  pickerContainer: {
+    marginBottom: 20,
+  },
+  pickerLabel: {
+    color: '#20315f',
+    marginBottom: 10,
+  },
+  picker: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    fontSize: 16,
   },
 });
 

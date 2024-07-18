@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Picker } from '@react-native-picker/picker';
-
+import axios from 'axios';
 import CustomButton from '../components/CustomButton.jsx';
 import InputField from '../components/InputField.jsx';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
-    userType: '',
+    usertype: '',
   });
 
   React.useLayoutEffect(() => {
@@ -27,6 +28,16 @@ const LoginScreen = () => {
     });
   }, [navigation]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setFormData({
+        username: '',
+        password: '',
+        usertype: '',
+      });
+    }, [])
+  );
+
   const handleInputChange = (field, value) => {
     console.log(`${field}: ${value}`); // Debugging line
     setFormData({
@@ -35,13 +46,39 @@ const LoginScreen = () => {
     });
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     console.log('Logging in with:', formData); // Debugging line
-    if (!formData.username || !formData.password || !formData.userType) {
+    if (!formData.username || !formData.password || !formData.usertype) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
-    navigation.navigate('AppStack');
+
+    try {
+      const response = await axios.post('http://172.16.0.42:8000/api/login/', {
+        username: formData.username,
+        password: formData.password,
+        usertype: formData.usertype,
+      });
+
+      console.log('Login successful:', response.data); // Debugging line
+      const { token, user, username } = response.data;
+      await AsyncStorage.setItem('token', token);
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+      await AsyncStorage.setItem('username', username);
+      // Navigate conditionally based on user type
+      if (formData.usertype === 'Admin') {
+        navigation.navigate('AdminStack');
+      } else if (formData.usertype === 'Student') {
+        navigation.navigate('AppStack');
+      } else if (formData.usertype === 'Security') {
+        // Handle security navigation if needed
+      } else {
+        Alert.alert('Error', 'Invalid user type');
+      }
+    } catch (error) {
+      console.error('Login failed:', error); // Debugging line
+      Alert.alert('Error', 'Invalid credentials');
+    }
   };
 
   return (
@@ -74,14 +111,14 @@ const LoginScreen = () => {
         <View style={styles.pickerContainer}>
           <Text style={styles.pickerLabel}>Login As:</Text>
           <Picker
-            selectedValue={formData.userType}
+            selectedValue={formData.usertype}
             style={styles.picker}
-            onValueChange={(itemValue) => handleInputChange('userType', itemValue)}
+            onValueChange={(itemValue) => handleInputChange('usertype', itemValue)}
           >
             <Picker.Item label="--Select Type--" value="" />
-            <Picker.Item label="Student" value="student" />
-            <Picker.Item label="Admin" value="admin" />
-            <Picker.Item label="Security" value="security" />
+            <Picker.Item label="Student" value="Student" />
+            <Picker.Item label="Admin" value="Admin" />
+            <Picker.Item label="Security" value="Security" />
           </Picker>
         </View>
 

@@ -12,7 +12,6 @@ import ViewComplaints from '../screens/ViewComplaints';
 import ComplaintDetails from '../screens/ComplaintDetails'; // Import ComplaintDetails
 import { Ionicons } from '@expo/vector-icons';
 import CustomDrawerContent from './CustomDrawerContent'; // Import the custom drawer content component
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -28,13 +27,13 @@ const ComplaintsStack = () => {
       <Stack.Screen
         name="ComplaintDetails"
         component={ComplaintDetails}
-        options={{ headerShown:false, title: 'Complaint Details',headerShadowVisible: false }}
+        options={{ headerShown: false, title: 'Complaint Details',headerShadowVisible: false, }}
       />
     </Stack.Navigator>
   );
 };
 
-const AppStack = () => {
+const AdminStack = () => {
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
@@ -82,7 +81,7 @@ const AppStack = () => {
           headerShadowVisible: false,
         }}
       />
-       <Drawer.Screen
+       {/* <Drawer.Screen
         name="Complaint"
         component={ComplaintScreen}
         options={{
@@ -90,7 +89,7 @@ const AppStack = () => {
           title: 'Raise a Complaint',
           headerShadowVisible: false,
         }}
-      />
+      /> */}
       <Drawer.Screen
         name="GatePass"
         component={GatePassScreen}
@@ -99,6 +98,11 @@ const AppStack = () => {
           title: 'GatePass',
           headerShadowVisible: false,
         }}
+      />
+      <Drawer.Screen
+        name="AddUser"
+        component={AddStudent}
+        options={{ headerShown: true, title: 'Add User' }}
       />
       <Drawer.Screen
         name="About"
@@ -122,4 +126,4 @@ const AppStack = () => {
   );
 };
 
-export default AppStack;
+export default AdminStack;

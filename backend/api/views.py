@@ -66,21 +66,33 @@ class RegisterView(views.APIView):
 def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
+    usertype = request.data.get('usertype')
 
-    print(f"Login attempt with email: {username}")
+    print(f"Login attempt with username: {username}, usertype: {usertype}")
 
-    user = authenticate(username=username,password=password)
+    user = authenticate(username=username, password=password)
     print(user)
+    
     if user is not None:
-        token, _ = Token.objects.get_or_create(user=user)
-        user_data = User_details.objects.filter(user_id = user.id).values()
-        json_data = json.dumps(list(user_data))
-        data = json.loads(json_data)
+        try:
+            user_details = User_details.objects.get(user_id=user.id)
+            print(usertype)
+            if user_details.usertype == usertype:
+                token, _ = Token.objects.get_or_create(user=user)
+                user_data = User_details.objects.filter(user_id=user.id).values()
+                json_data = json.dumps(list(user_data))
+                data = json.loads(json_data)
 
-        return Response({"user": data[0],'token': token.key})
+                return Response({"user": data[0], 'token': token.key, 'username': username})
+            else:
+                print("Login failed: Incorrect usertype")
+                return Response({'error': 'Incorrect usertype'}, status=status.HTTP_400_BAD_REQUEST)
+        except User_details.DoesNotExist:
+            print("Login failed: User details not found")
+            return Response({'error': 'User details not found'}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        print("Login failed: Invalid Credentials")
-        return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
+        print("Login failed: Invalid credentials")
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])

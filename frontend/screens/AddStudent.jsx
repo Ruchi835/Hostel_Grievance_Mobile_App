@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Picker } from '@react-native-picker/picker';
+import axios from 'axios';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -24,29 +25,46 @@ const AddStudent = () => {
     });
   };
 
-  const handleSubmit = () => {
-    // Validate the form fields
+  const handleSubmit = async () => {
     if (!formData.username || !formData.password || !formData.email || !formData.branch || !formData.semester || !formData.roomno) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
-    // Perform submission logic here (e.g., send data to backend, show confirmation)
-    console.log('Adding student:', formData);
+    const payload = {
+      user: {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      },
+      branch: formData.branch,
+      semester: parseInt(formData.semester, 10),
+      roomno: parseInt(formData.roomno, 10),
+      usertype: 'Student',
+    };
 
-    // Optionally, reset form fields after submission
-    setFormData({
-      username: '',
-      password: '',
-      email: '',
-      branch: '',
-      semester: '',
-      roomno: '',
-    });
+    console.log('Request payload:', payload);
 
-    // Navigate or show a success message
-    Alert.alert('Success', 'Student added successfully');
+    try {
+      const response = await axios.post('http://172.16.0.42:8000/api/register/', payload);
+      console.log('Student added:', response.data);
+      Alert.alert('Success', 'Student added successfully');
+
+      // Reset form fields
+      setFormData({
+        username: '',
+        password: '',
+        email: '',
+        branch: '',
+        semester: '',
+        roomno: '',
+      });
+    } catch (error) {
+      console.error('Error adding student:', error.response?.data || error.message);
+      Alert.alert('Error', `Failed to add student: ${error.response?.data?.message || error.message}`);
+    }
   };
+
 
   return (
     <View style={styles.container}>
@@ -121,31 +139,47 @@ const AddAdmin = () => {
     });
   };
 
-  const handleSubmit = () => {
-    // Validate the form fields
+  const handleSubmit = async () => {
     if (!formData.username || !formData.password || !formData.email || !formData.usertype) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
-    // Perform submission logic here (e.g., send data to backend, show confirmation)
-    console.log('Adding admin:', formData);
+    const payload = {
+      user: {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      },
+      branch: 'null',
+      semester: 0,
+      roomno: 0,
+      usertype: formData.usertype,
+    };
 
-    // Optionally, reset form fields after submission
-    setFormData({
-      username: '',
-      password: '',
-      email: '',
-      usertype: '',
-    });
+    console.log('Request payload:', payload);
 
-    // Navigate or show a success message
-    Alert.alert('Success', 'Admin added successfully');
+    try {
+      const response = await axios.post('http://172.16.0.42:8000/api/register/', payload);
+      console.log('Admin added:', response.data);
+      Alert.alert('Success', 'User added successfully');
+
+      // Reset form fields
+      setFormData({
+        username: '',
+        password: '',
+        email: '',
+        usertype: '',
+      });
+    } catch (error) {
+      console.error('Error adding admin:', error.response?.data || error.message);
+      Alert.alert('Error', `Failed to add user: ${error.response?.data?.message || error.message}`);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add New Admin</Text>
+      <Text style={styles.title}>Add New User</Text>
 
       <TextInput
         style={styles.input}
@@ -175,9 +209,9 @@ const AddAdmin = () => {
         style={styles.input}
         onValueChange={(itemValue) => handleInputChange('usertype', itemValue)}
       >
-        <Picker.Item label="--Select Type--" value="" />
-        <Picker.Item label="Admin" value="admin" />
-        <Picker.Item label="Security" value="security" />
+        <Picker.Item label="--Select User Type--" value="" />
+        <Picker.Item label="Admin" value="Admin" />
+        <Picker.Item label="Security" value="Security" />
       </Picker>
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
@@ -200,7 +234,7 @@ const AddUserTabs = () => {
       independent={true}
     >
       <Tab.Screen name="Add Student" component={AddStudent} />
-      <Tab.Screen name="Add Admin" component={AddAdmin} />
+      <Tab.Screen name="Add User" component={AddAdmin} />
     </Tab.Navigator>
   );
 };

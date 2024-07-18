@@ -10,7 +10,7 @@ const ViewComplaints = () => {
   const [complaints, setComplaints] = useState([]);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/complaints/')
+    axios.get('http://172.16.0.42:8000/complaints/')
       .then(response => setComplaints(response.data))
       .catch(error => console.error(error));
   }, []);

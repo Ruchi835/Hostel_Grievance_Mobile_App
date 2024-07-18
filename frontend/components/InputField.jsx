@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function InputField({
   label,
@@ -11,6 +12,12 @@ export default function InputField({
   fieldButtonLabel,
   fieldButtonFunction,
 }) {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
   return (
     <View
       style={{
@@ -19,6 +26,7 @@ export default function InputField({
         borderBottomWidth: 1,
         paddingBottom: 8,
         marginBottom: 25,
+        alignItems: 'center',
       }}
     >
       {icon}
@@ -26,13 +34,17 @@ export default function InputField({
         placeholder={label}
         keyboardType={keyboardType}
         style={{ flex: 1, paddingVertical: 0 }}
-        secureTextEntry={inputType === 'password'}
+        secureTextEntry={inputType === 'password' && !isPasswordVisible}
         value={value}
         onChangeText={onChangeText}
       />
-      {fieldButtonLabel && (
-        <TouchableOpacity onPress={fieldButtonFunction}>
-          <Text style={{ color: '#AD40AF', fontWeight: '700' }}>{fieldButtonLabel}</Text>
+      {inputType === 'password' && (
+        <TouchableOpacity onPress={togglePasswordVisibility}>
+          <Ionicons
+            name={isPasswordVisible ? "eye-off" : "eye"}
+            size={20}
+            color="#20315f"
+          />
         </TouchableOpacity>
       )}
     </View>

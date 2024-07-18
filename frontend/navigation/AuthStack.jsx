@@ -4,6 +4,7 @@ import { StatusBar } from 'react-native';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import LoginScreen from '../screens/LoginScreen';
 import AppStack from './AppStack';
+import AdminStack from './AdminStack';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,7 @@ const AuthStack = () => {
       <Stack.Screen  name="Onboarding" component={OnboardingScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Login" component={LoginScreen} options={{headerShadowVisible:false,backgroundColor:'#ffffff'}} />
       <Stack.Screen name="AppStack" component={AppStack} options={{ headerShown: false }} />
+      <Stack.Screen name="AdminStack" component={AdminStack} options={{ headerShown: false }} />
       </Stack.Navigator>
       </>
     );
