@@ -1,18 +1,16 @@
-// AppStack.jsx
 import React from 'react';
+import { View, Image, StyleSheet } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from '../screens/HomeScreen';
-import ComplaintScreen from '../screens/ComplaintScreen';
-import OnboardingScreen from '../screens/OnboardingScreen';
+import UserHomeScreen from '../screens/UserScreens/UserHomeScreen';
+import ComplaintScreen from '../screens/UserScreens/ComplaintScreen';
 import AboutScreen from '../screens/AboutScreen';
 import GatePassScreen from '../screens/GatePassScreen';
-import AddStudent from '../screens/AddStudent';
-import ViewComplaints from '../screens/ViewComplaints';
-import ComplaintDetails from '../screens/ComplaintDetails'; // Import ComplaintDetails
+import UserViewComplaints from '../screens/UserScreens/UserViewComplaints';
+import UserComplaintDetails from '../screens/UserScreens/UserComplaintDetails'; // Import ComplaintDetails
 import { Ionicons } from '@expo/vector-icons';
 import CustomDrawerContent from './CustomDrawerContent'; // Import the custom drawer content component
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import LogoutScreen from '../screens/LogoutScreen';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -21,16 +19,27 @@ const ComplaintsStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="ViewComplaints"
-        component={ViewComplaints}
+        name="UserViewComplaints"
+        component={UserViewComplaints}
         options={{ headerShown: false, title: 'View Complaints' }}
       />
       <Stack.Screen
-        name="ComplaintDetails"
-        component={ComplaintDetails}
+        name="UserComplaintDetails"
+        component={UserComplaintDetails}
         options={{ headerShown:false, title: 'Complaint Details',headerShadowVisible: false }}
       />
     </Stack.Navigator>
+  );
+};
+
+const HeaderRightImage = () => {
+  return (
+    <View style={styles.imageContainer}>
+      <Image
+        source={require('../assets/images/about.png')} // Replace with your image path
+        style={styles.image}
+      />
+    </View>
   );
 };
 
@@ -48,8 +57,8 @@ const AppStack = () => {
             iconName = focused ? 'home-outline' : 'home-outline';
           } else if (route.name === 'ViewComplaint') {
             iconName = focused ? 'chatbox-outline' : 'chatbox-outline';
-          } else if (route.name === 'Complaint') {
-            iconName = focused ? 'chatbox-outline' : 'chatbox-outline';
+          } else if (route.name === 'UserComplaint') {
+            iconName = focused ? 'alert-circle-outline' : 'alert-circle-outline';
           } else if (route.name === 'About') {
             iconName = focused ? 'information-circle-outline' : 'information-circle-outline';
           } else if (route.name === 'GatePass') {
@@ -61,15 +70,19 @@ const AppStack = () => {
           }
           return <Ionicons name={iconName} size={size} color={focused ? '#F5B041' : '#20315f'} />;
         },
+        headerRight: () => <HeaderRightImage />, // Add the image to the header
       })}
       drawerPosition="left"
     >
       <Drawer.Screen
         name="Home"
-        component={HomeScreen}
+        component={UserHomeScreen}
         options={{
           headerShown: true,
           title: 'Home',
+          headerTitleStyle: {
+            color: '#20315f', // Set the title color here
+          },
           headerShadowVisible: false,
         }}
       />
@@ -79,15 +92,21 @@ const AppStack = () => {
         options={{
           headerShown: true,
           title: 'View Complaints',
+          headerTitleStyle: {
+            color: '#20315f', // Set the title color here
+          },
           headerShadowVisible: false,
         }}
       />
        <Drawer.Screen
-        name="Complaint"
+        name="UserComplaint"
         component={ComplaintScreen}
         options={{
           headerShown: true,
-          title: 'Raise a Complaint',
+          title: 'Report Issue',
+          headerTitleStyle: {
+            color: '#20315f', // Set the title color here
+          },
           headerShadowVisible: false,
         }}
       />
@@ -97,6 +116,9 @@ const AppStack = () => {
         options={{
           headerShown: true,
           title: 'GatePass',
+          headerTitleStyle: {
+            color: '#20315f', // Set the title color here
+          },
           headerShadowVisible: false,
         }}
       />
@@ -106,12 +128,15 @@ const AppStack = () => {
         options={{
           headerShown: true,
           title: 'About',
+          headerTitleStyle: {
+            color: '#20315f', // Set the title color here
+          },
           headerShadowVisible: false,
         }}
       />
       <Drawer.Screen
         name="Logout"
-        component={OnboardingScreen}
+        component={LogoutScreen}
         options={{
           headerShown: false,
           title: 'Logout',
@@ -121,5 +146,16 @@ const AppStack = () => {
     </Drawer.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  imageContainer: {
+    marginRight: 10,
+  },
+  image: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+});
 
 export default AppStack;

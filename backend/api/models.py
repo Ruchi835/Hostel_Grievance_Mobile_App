@@ -25,14 +25,6 @@ class Complaint(models.Model):
         related_name='student_complaints', 
         limit_choices_to={'usertype': 'Student'}
     )
-    supervisor = models.ForeignKey(
-        User_details, 
-        on_delete=models.CASCADE, 
-        related_name='supervisor_complaints', 
-        limit_choices_to={'usertype': 'Supervisor'},
-        null=True, 
-        blank=True
-    )
     description = models.TextField()
     status = models.CharField(
         max_length=20,

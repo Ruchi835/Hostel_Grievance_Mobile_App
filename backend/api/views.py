@@ -39,7 +39,7 @@ class ComplaintViewSet(viewsets.ModelViewSet):
         print(data)
         serializer=self.get_serializer(complaints,many=True)
         print(serializer.data)
-        return Response({"user": data[0],"complaints":serializer.data[0]})
+        return Response({"user": data[0],"complaints":serializer.data})
     
     @action(detail=False,methods=['get'],url_path='pending-complaints')
     def get_pending_complaints(self,request):

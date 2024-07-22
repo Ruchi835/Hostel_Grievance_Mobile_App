@@ -54,7 +54,7 @@ const LoginScreen = () => {
     }
 
     try {
-      const response = await axios.post('http://172.16.0.42:8000/api/login/', {
+      const response = await axios.post('http://192.168.243.94:8000/api/login/', {
         username: formData.username,
         password: formData.password,
         usertype: formData.usertype,

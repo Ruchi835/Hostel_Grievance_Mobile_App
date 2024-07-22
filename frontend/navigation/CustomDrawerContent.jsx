@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState  } from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     alignItems: 'center',
     paddingVertical: 20,
+    
   },
   profileName: {
     marginTop: 10,
@@ -64,6 +65,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#20315f',
   },
+  
 });
 
 export default CustomDrawerContent;
