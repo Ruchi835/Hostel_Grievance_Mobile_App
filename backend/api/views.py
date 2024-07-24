@@ -64,6 +64,7 @@ class RegisterView(views.APIView):
 
 @api_view(['POST'])
 def login_view(request):
+    print("hello")
     username = request.data.get('username')
     password = request.data.get('password')
     usertype = request.data.get('usertype')

@@ -54,7 +54,7 @@ const LoginScreen = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.243.94:8000/api/login/', {
+      const response = await axios.post(`http://192.168.1.123:8000/api/login/`, {
         username: formData.username,
         password: formData.password,
         usertype: formData.usertype,
@@ -65,7 +65,7 @@ const LoginScreen = () => {
       await AsyncStorage.setItem('token', token);
       await AsyncStorage.setItem('user', JSON.stringify(user));
       await AsyncStorage.setItem('username', username);
-      // Navigate conditionally based on user type
+      
       if (formData.usertype === 'Admin') {
         navigation.navigate('AdminStack');
       } else if (formData.usertype === 'Student') {
@@ -76,7 +76,8 @@ const LoginScreen = () => {
         Alert.alert('Error', 'Invalid user type');
       }
     } catch (error) {
-      console.error('Login failed:', error); // Debugging line
+      // console.log(formData)
+      console.error('Login failed:', error)
       Alert.alert('Error', 'Invalid credentials');
     }
   };

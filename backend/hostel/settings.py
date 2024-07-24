@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-gd%@hon$8&1^&9+9-h1a#znwz)km*190i!$h%@+%reniw*n2n#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.243.94']
+ALLOWED_HOSTS = ['192.168.1.123']
 
 #
 # Application definition
@@ -98,7 +98,7 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8081",  # Local web server for React Native web
     "http://172.16.0.171:8081",  # Expo development server for React Native
-    "http://127.0.0.1:8000",
+    "http://192.168.1.123:8000",
 ]
 
 # Database
