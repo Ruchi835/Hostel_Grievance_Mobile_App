@@ -1,16 +1,42 @@
 import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, BackHandler, Alert } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const UserHomeScreen = () => {
   const navigation = useNavigation();
+  const isFocused = useNavigation().isFocused;
 
   const fadeAnimComplaint = new Animated.Value(0);
   const scaleAnimComplaint = new Animated.Value(0.5);
 
   const fadeAnimGatePass = new Animated.Value(0);
   const scaleAnimGatePass = new Animated.Value(0.5);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (isFocused()) {
+          Alert.alert("Hold on!", "Are you sure you want to exit the app?", [
+            {
+              text: "Cancel",
+              onPress: () => null,
+              style: "cancel",
+              
+            },
+            { text: "YES", onPress: () => BackHandler.exitApp() }
+          ]);
+          return true;
+        }
+        return false;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [isFocused])
+  );
+
 
   useEffect(() => {
     Animated.stagger(300, [
@@ -99,3 +125,5 @@ const styles = StyleSheet.create({
 });
 
 export default UserHomeScreen;
+
+

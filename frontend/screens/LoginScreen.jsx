@@ -65,7 +65,8 @@ const LoginScreen = () => {
       await AsyncStorage.setItem('token', token);
       await AsyncStorage.setItem('user', JSON.stringify(user));
       await AsyncStorage.setItem('username', username);
-      
+      // Navigate conditionally based on user type
+      Alert.alert('Login Successful','You have been logged in successfully.')
       if (formData.usertype === 'Admin') {
         navigation.navigate('AdminStack');
       } else if (formData.usertype === 'Student') {
