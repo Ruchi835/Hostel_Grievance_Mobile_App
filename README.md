@@ -66,8 +66,8 @@ The Hostel Grievance Management System simplifies communication between hostel r
 1. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/yourusername/hostel-grievance-app.git
-   cd hostel-grievance-app
+   git clone [https://github.com/Ruchi835/Hostel_Grievance_Mobile_App.git]
+   cd Hostel_Grievance_Mobile_App
    ```
 
 2. **Frontend Setup**:
